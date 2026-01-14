@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nosso Livro Mágico 💖</title>
+<style>
+/* ====== ESTILO GERAL ====== */
+body{
+    margin:0;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: linear-gradient(to bottom,#ffe4e1,#fff0f5);
+    overflow-x:hidden;
+    position:relative;
+}
+#musicBtn{
+    position: fixed; top: 15px; right: 15px;
+    padding:10px 20px;
+    border:none; border-radius:12px;
+    background:#ff69b4;color:white;
+    cursor:pointer; z-index:1000;
+}
+#contador{
+    text-align:center;
+    margin:10px 0 30px 0;
+    font-size:20px;color:#ff1493;
+}
+.flipbook{
+    width:90%; max-width:900px;
+    height:500px; margin:40px auto;
+    position:relative;
+}
+.page{
+    width:100%; height:100%;
+    background:#fff8f0;
+    border-radius:15px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    position:absolute; top:0; left:0;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    cursor:pointer;
+    transition:all 0.5s ease;
+}
+.page.active{
+    display:flex;
+    animation:glow 1s ease;
+}
+@keyframes glow{
+    0%{transform:scale(0.95);opacity:0;}
+    50%{transform:scale(1.02);opacity:1;}
+    100%{transform:scale(1);opacity:1;}
+}
+.page h2{
+    color:#ff1493; text-shadow:0 0 12px #ffb6c1; margin:0;
+}
+.page img{
+    max-width:80%;
+    border-radius:15px;
+    margin:10px 0;
+    transition:transform 0.3s, box-shadow 0.5s;
+}
+.page img:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 20px #ffb6c1;
+}
+/* ANIMAÇÃO DE CORAÇÕES E CONFETES */
+.fall{
+    position:fixed;
+    top:-50px;
+    width:30px; height:30px;
+    pointer-events:none;
+    animation-name:fall;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+}
+@keyframes fall{
+    0%{transform:translateY(-50px) rotate(0deg); opacity:1;}
+    100%{transform:translateY(100vh) rotate(360deg); opacity:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- MÚSICA E SOM -->
+<audio id="music" src="music/musica.mp3" loop></audio>
+<audio id="flipSound" src="sound/page-flip.mp3"></audio>
+<button id="musicBtn">Tocar Música</button>
+
+<!-- LIVRO / FLIPBOOK -->
+<div class="flipbook">
+    <div class="page active"><h2>Nosso Primeiro Dia 💖</h2><p>11/09/2025 foi o começo de tudo mágico com você!</p><img src="img/foto1.jpg"></div>
+    <div class="page"><h2>Momentos Felizes 🌸</h2><p>Cada sorriso seu ilumina meus dias.</p><img src="img/foto2.jpg"></div>
+    <div class="page"><h2>Surpresas 💌</h2><p>Suas surpresas me deixam cada vez mais apaixonado!</p><img src="img/foto3.jpg"></div>
+    <div class="page"><h2>Memórias Engraçadas 😂</h2><p>As nossas risadas e piadas internas são inesquecíveis!</p><img src="img/foto4.jpg"></div>
+    <div class="page"><h2>Nosso Amor 💞</h2><p>Eu te amo mais a cada dia que passa.</p><img src="img/foto5.jpg"></div>
+    <div class="page"><h2>Para Sempre Nós 🌟</h2><p>Obrigado por ser a pessoa mais especial da minha vida.</p><img src="img/foto6.jpg"></div>
+    <div class="page"><h2>Momentos Românticos 💕</h2><p>Os abraços e carinhos me fazem sentir sortudo.</p><img src="img/foto7.jpg"></div>
+    <div class="page"><h2>Aventuras Juntos 🌈</h2><p>Cada viagem e passeio é inesquecível com você!</p><img src="img/foto8.jpg"></div>
+    <div class="page"><h2>Memórias Mágicas ✨</h2><p>Guardarei cada instante no meu coração.</p><img src="img/foto9.jpg"></div>
+    <div class="page"><h2>Amor Infinito 💖</h2><p>Que possamos continuar juntos por toda a vida.</p><img src="img/foto10.jpg"></div>
+</div>
+
+<!-- CONTADOR -->
+<div id="contador">Carregando...</div>
+
+<script>
+// PAGINAS
+let pages=document.querySelectorAll('.page'),cur=0;
+// MÚSICA
+const music=document.getElementById('music'),flipSound=document.getElementById('flipSound'),btn=document.getElementById('musicBtn');
+btn.onclick=()=>{music.paused?music.play():music.pause();btn.textContent=music.paused?"Tocar Música":"Parar Música";}
+// CONTADOR
+function atualizarContador(){
+    let inicio=new Date("2025-09-11T00:00:00"),agora=new Date(),diff=agora-inicio;
+    let h=Math.floor(diff/36e5); diff-=h*36e5;
+    let m=Math.floor(diff/6e4); diff-=m*6e4;
+    let s=Math.floor(diff/1e3);
+    document.getElementById('contador').textContent=h+'h '+m+'m '+s+'s juntos 💖';
+}
+setInterval(atualizarContador,1000); atualizarContador();
+// MOSTRAR PÁGINA
+function mostrarPagina(i){pages.forEach(p=>p.classList.remove('active'));pages[i].classList.add('active');}
+// CLIQUE PARA AVANÇAR/VOLTAR
+document.querySelector('.flipbook').onclick=e=>{
+    const x=e.clientX,w=window.innerWidth;
+    flipSound.currentTime=0; flipSound.play();
+    if(x<w/2){if(cur>0) cur--}else{if(cur<pages.length-1) cur++}
+    mostrarPagina(cur);
+}
+// ANIMAÇÃO DE CORAÇÕES / CONFETES
+function criarConfete(){
+    let c=document.createElement('div');
+    c.className='fall';
+    c.style.left=Math.random()*window.innerWidth+'px';
+    c.style.width=c.style.height=(Math.random()*20+15)+'px';
+    c.style.background="url('img/heart.png') no-repeat center/contain";
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),10000);
+}
+setInterval(criarConfete,300);
+</script>
+
+</body>
+</html>
